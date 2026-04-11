@@ -25,13 +25,20 @@ In our project, we don't have access to user interaction history and have rather
 
 Some prompts to answer:
 
-- What features does each `Song` use in your system
+- What features does each `Song` use in your system?
+
   As user preference provides favorite_genre, favorite_mood, target_energy, and likes_acoustic or not boolean value as attributes, we will use genre, mood, energy and acousticness features of the song to use in our recommender systems.
-- What information does your `UserProfile` store
+  
+- What information does your `UserProfile` store?
+
   UserProfile has user preferences namely favorite_genre, favorite_mood, target_energy, and likes_acoustic.
-- How does your `Recommender` compute a score for each song
+
+- How does your `Recommender` compute a score for each song?
+
   For each song, the feature of the song and user preference are compared based on if they are matched. Genre, mood, energy and acousticness have weights assigned in non-incremental order from 20, 15, 15, and 10 if each values match the user preference. The final score is summation of all the scores for each feature.
-- How do you choose which songs to recommend
+
+- How do you choose which songs to recommend?
+
   In order to add diversity to the recommendation, we will approach the recommendation with 80% similarity and 20% discovery. Among top K, 80% will be highest ranked and the 20% will be the lowest ranked songs. The recommendation also ensures all the songs are from different artists to promore exploration.
 
 You can include a simple diagram or bullet list if helpful.
