@@ -13,6 +13,15 @@ Your goal is to:
 
 Replace this paragraph with your own summary of what your version does.
 
+
+User Taste Profile #1: "Late Night Study Session"
+study_user = UserProfile(
+    favorite_genre="lofi",
+    favorite_mood="chill",
+    target_energy=0.40,
+    likes_acoustic=True
+)
+
 ---
 
 ## How The System Works
@@ -21,25 +30,32 @@ Recommendation systems are built based on approaches namely content-based filter
 
 Collaborative filtering on the other hand solely depends on the user's interactions with features/items within the system. Two major approach to collaborative filtering are Item-Item based and User-User based collaborative filtering. Item-item based filtering focuses on items a user have interacted most with such as liked, added to the playlist, saved to the library in the past and compares similar items to the user's liking to be recommeded. While user-user based filtering finds similar users based on their interaction history and recommends items top similar users have liked for our given user.
 
-In our project, we don't have access to user interaction history and have rather smaller dataset to work with. Given the limitations, our project will focus on implementing content-based filtering to recommend songs to a user. User have their preference listed in their profile which highlights the genre, mood, energy and whether the user likes acoustic songs or not. Similarly, songs have similar attributes in their song. We will use the user preference and song attributes to recommend top k songs to our user.
+In our project, we don't have access to user interaction history and have rather smaller dataset to work with. Given the limitations, our project will focus on implementing content-based filtering to recommend songs to a user. User have their preference listed in their profile which highlights the genre, mood, energy and whether the user likes acoustic songs or not. We will add target_valence as an attribute to user profile in addition to other features. Similarly, songs have similar attributes in their song. We will use the user preference and song attributes to recommend songs to our user. Each feature used to find recommendation namely genre, mood, energy, acousticness, and valence will be weighted as 30, 25, 20, 15 & 10 respectively. The final score is the summation of these scores for a user and song scoring algorithm. The final list of songs will be generated in sorted order of highest to lowest score. 80% of the recommendation for the user will come from highest scored songs while 20% of ths songs will be the lowest scored from the output based on user preference to add diversity and exploration factor to the recommendation. In addition, songs from same artist will not be recommended.
+
+Potential biases in our approach are follwing:
+1) As genre and mood carry heavy points, song that doesn't match these will be penalized with 55 points even though other features might match with user's preference. 
+Example: Rooftop Lights (indie pop, happy, 0.82 energy) will always outscore Storm Runner (rock, intense, 0.91 energy) for a pop-loving user, even if the energy match is closer.
+2) Lack in negative preferences in UserProfile.
+3) Assigning static weights to features might not produce personalized recommendation. Allowing user to modualte weights will produce better recommendations.
+4) A single target_valence can't capture user's context dependency.
 
 Some prompts to answer:
 
 - What features does each `Song` use in your system?
 
-  As user preference provides favorite_genre, favorite_mood, target_energy, and likes_acoustic or not boolean value as attributes, we will use genre, mood, energy and acousticness features of the song to use in our recommender systems.
-  
+  As user preference provides favorite_genre, favorite_mood, target_energy, and likes_acoustic or not boolean value as attributes, we will use genre, mood, energy and acousticness features of the song to use in our recommender systems. In additon target_valence will be added as a feature in user profile and will be used to score songs.
+
 - What information does your `UserProfile` store?
 
-  UserProfile has user preferences namely favorite_genre, favorite_mood, target_energy, and likes_acoustic.
+  UserProfile has user preferences namely favorite_genre, favorite_mood, target_energy, and likes_acoustic. target_valence will be added to the UserProfile during implementation.
 
 - How does your `Recommender` compute a score for each song?
 
-  For each song, the feature of the song and user preference are compared based on if they are matched. Genre, mood, energy and acousticness have weights assigned in non-incremental order from 20, 15, 15, and 10 if each values match the user preference. The final score is summation of all the scores for each feature.
+  For each song, the feature of the song and user preference are compared based on if they are matched. Genre, mood, energy, acousticness and valence have weights assigned in non-incremental order from 30, 25, 20, 15 and 10 if each values match the user preference. The final score is summation of all the scores for each feature.
 
 - How do you choose which songs to recommend?
 
-  In order to add diversity to the recommendation, we will approach the recommendation with 80% similarity and 20% discovery. Among top K, 80% will be highest ranked and the 20% will be the lowest ranked songs. The recommendation also ensures all the songs are from different artists to promore exploration.
+  In order to add diversity to the recommendation, we will approach the recommendation with 80% similarity and 20% discovery. Among top K, 80% will be highest ranked and the 20% will be the lowest ranked songs. The recommendation also ensures all the songs are from different artists to promote exploration.
 
 You can include a simple diagram or bullet list if helpful.
 

@@ -28,6 +28,7 @@ class UserProfile:
     favorite_mood: str
     target_energy: float
     likes_acoustic: bool
+    target_valence: float
 
 class Recommender:
     """
@@ -63,23 +64,29 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     reasons = []
 
     if user_prefs["favorite_genre"] == song["genre"]:
-        score += 20
+        score += 30
         reasons.append(f"matches your {user_prefs['favorite_genre']} preference")
 
     if user_prefs["favorite_mood"] == song["mood"]:
-        score += 15
+        score += 25
         reasons.append(f"has the {user_prefs['favorite_mood']} you like")
 
     energy_diff = abs(user_prefs["target_energy"] - song["energy"])
-    energy_score = 15 * (1 - energy_diff) # Higher if closer to target energy
+    energy_score = 20 * (1 - energy_diff) # Higher if closer to target energy
     score += energy_score
     reasons.append(f"energy level {song['energy']:.1f}" + 
                    (" matches" if energy_diff < 0.1 else " complements"))
 
     if user_prefs["likes_acoustic"] and song["acousticness"] > 0.7:
-        score += 10
+        score += 15
         reasons.append("has the acoustic sound you enjoy")
     
+    valence_diff = abs(user_prefs["target_valence"] - song["valence"])
+    valence_score = 10 * (1 - valence_diff) # Higher if closer to target valence
+    score += valence_score
+    reasons.append(f"valence level {song['valence']:.1f}" + 
+                   (" matches" if valence_diff < 0.1 else " complements"))
+
     # Expected return format: (score, reasons)
     return [score, reasons]
 
