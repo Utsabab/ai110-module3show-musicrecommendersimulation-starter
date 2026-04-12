@@ -95,6 +95,8 @@ Prompts:
 
 - Which user profiles you tested  
 
+User with pop+happy preference have most chances of getting good recommendation based on data distribution
+
 user_prefs = {"favorite_genre": "pop", "favorite_mood": "happy", "target_energy": 0.8}
 
 User with electronic genre preference but wants acoustic, electronic genre has least acoustic
