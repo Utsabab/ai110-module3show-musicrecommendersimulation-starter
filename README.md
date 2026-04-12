@@ -74,6 +74,11 @@ user_prefs = {"favorite_genre": "metal", "favorite_mood": "peaceful", "target_en
 user_prefs = {}
 ![](image/empty.png)
 
+Results for feature removal:
+
+user_prefs = {"favorite_genre": "metal", "favorite_mood": "peaceful", "target_energy": 0.95, "target_valence": 0.30, "likes_acoustic": False}
+![](image/featureRemoval.png)
+
 ---
 
 ## Getting Started

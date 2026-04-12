@@ -97,11 +97,11 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
         score += 30
         reasons.append(f"matches your {favorite_genre} preference")
 
-    # Mood scoring (only if favorite_mood is specified)
-    favorite_mood = user_prefs.get("favorite_mood")
-    if favorite_mood and favorite_mood == song["mood"]:
-        score += 25
-        reasons.append(f"has the {favorite_mood} you like")
+    # Mood scoring (only if favorite_mood is specified) - DISABLED FOR EXPERIMENT
+    # favorite_mood = user_prefs.get("favorite_mood")
+    # if favorite_mood and favorite_mood == song["mood"]:
+    #     score += 25
+    #     reasons.append(f"has the {favorite_mood} you like")
 
     # Energy scoring (only if target_energy is specified)
     target_energy = user_prefs.get("target_energy")

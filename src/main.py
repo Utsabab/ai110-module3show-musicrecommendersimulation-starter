@@ -42,13 +42,13 @@ def main() -> None:
     
     # Expected behavior: No song matches both mood AND genre (metal songs aren't peaceful). 
     # System can't satisfy both the mood preference (+25 points) and all energy/valence targets. Will force a choice.
-    # user_prefs = {
-    # "favorite_genre": "metal",           # 0.95 energy, 0.35 valence
-    # "favorite_mood": "peaceful",         # 0.62 energy, 0.77 valence
-    # "target_energy": 0.95,
-    # "target_valence": 0.30,
-    # "likes_acoustic": False
-    # }
+    user_prefs = {
+    "favorite_genre": "metal",           # 0.95 energy, 0.35 valence
+    "favorite_mood": "peaceful",         # 0.62 energy, 0.77 valence
+    "target_energy": 0.95,
+    "target_valence": 0.30,
+    "likes_acoustic": False
+    }
 
     # Expected behavior: All songs score 0. 
     # The system should still return k songs. Does it return the first k? 
