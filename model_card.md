@@ -98,12 +98,15 @@ Prompts:
 user_prefs = {"favorite_genre": "pop", "favorite_mood": "happy", "target_energy": 0.8}
 
 User with electronic genre preference but wants acoustic, electronic genre has least acoustic
+
 user_prefs = {"favorite_genre": "electronic", "favorite_mood": "energetic", "target_energy": 0.85, "likes_acoustic": True, "target_valence": 0.80}
 
 User with classical genre preference but wants high enerrgy song which is unlikely
+
 user_prefs = {"favorite_genre": "classical", "favorite_mood": "melancholic", "target_energy": 0.95, "target_valence": 0.30}
 
 User wants metal song but peaceful mood, that can't happen
+
 user_prefs = {"favorite_genre": "metal", "favorite_mood": "peaceful", "target_energy": 0.95, "target_valence": 0.30, "likes_acoustic": False}
 
 - What you looked for in the recommendations
