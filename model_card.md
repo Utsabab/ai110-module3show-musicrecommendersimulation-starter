@@ -94,11 +94,30 @@ How you checked whether the recommender behaved as expected.
 Prompts:  
 
 - Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
+
+user_prefs = {"favorite_genre": "pop", "favorite_mood": "happy", "target_energy": 0.8}
+
+# User with electronic genre preference but wants acoustic, electronic genre has least acoustic
+user_prefs = {"favorite_genre": "electronic", "favorite_mood": "energetic", "target_energy": 0.85, "likes_acoustic": True, "target_valence": 0.80}
+
+# User with classical genre preference but wants high enerrgy song which is unlikely
+user_prefs = {"favorite_genre": "classical", "favorite_mood": "melancholic", "target_energy": 0.95, "target_valence": 0.30}
+
+# User wants metal song but peaceful mood, that can't happen
+user_prefs = {"favorite_genre": "metal", "favorite_mood": "peaceful", "target_energy": 0.95, "target_valence": 0.30, "likes_acoustic": False}
+
+- What you looked for in the recommendations
+
+Looked for how each of the edge cases recommends songs.
+
+- What surprised you
+
+User searching for classical and high energy song got recommended metal song Thunder Strike as it has high energy match even though genre and mood don't match.
+
 - Any simple tests or comparisons you ran  
 
-No need for numeric metrics unless you created some.
+User looking for electronic genre usually have high energy and low acoustic preference.
+While users looking classical song recommendations have low energy and high acoustic preference.
 
 ---
 
