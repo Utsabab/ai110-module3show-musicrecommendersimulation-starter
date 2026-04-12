@@ -1,5 +1,6 @@
 from typing import List, Dict, Tuple, Optional
 from dataclasses import dataclass
+import csv
 
 @dataclass
 class Song:
@@ -51,50 +52,115 @@ def load_songs(csv_path: str) -> List[Dict]:
     Loads songs from a CSV file.
     Required by src/main.py
     """
-    # TODO: Implement CSV loading logic
+    songs = []
     print(f"Loading songs from {csv_path}...")
-    return []
+
+    try:
+        with open(csv_path, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                song = {
+                    'id': int(row['id']),
+                    'title': row['title'],
+                    'artist': row['artist'],
+                    'genre': row['genre'],
+                    'mood': row['mood'],
+                    'energy': float(row['energy']),
+                    'tempo_bpm': float(row['tempo_bpm']),
+                    'valence': float(row['valence']),
+                    'danceability': float(row['danceability']),
+                    'acousticness': float(row['acousticness'])
+                }
+                songs.append(song)
+    except FileNotFoundError:
+        print(f"Error: File {csv_path} not found.")
+        return []
+    except ValueError as e:
+        print(f"Error: Could not convert value to numeric type: {e}")
+        return []
+
+    print(f"Successfully loaded {len(songs)} songs.")
+    return songs
 
 def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     """
     Scores a single song against user preferences.
+    Gracefully handles missing preference parameters by skipping those scores.
     Required by recommend_songs() and src/main.py
     """
     score = 0
     reasons = []
 
-    if user_prefs["favorite_genre"] == song["genre"]:
+    # Genre scoring (only if favorite_genre is specified)
+    favorite_genre = user_prefs.get("favorite_genre")
+    if favorite_genre and favorite_genre == song["genre"]:
         score += 30
-        reasons.append(f"matches your {user_prefs['favorite_genre']} preference")
+        reasons.append(f"matches your {favorite_genre} preference")
 
-    if user_prefs["favorite_mood"] == song["mood"]:
+    # Mood scoring (only if favorite_mood is specified)
+    favorite_mood = user_prefs.get("favorite_mood")
+    if favorite_mood and favorite_mood == song["mood"]:
         score += 25
-        reasons.append(f"has the {user_prefs['favorite_mood']} you like")
+        reasons.append(f"has the {favorite_mood} you like")
 
-    energy_diff = abs(user_prefs["target_energy"] - song["energy"])
-    energy_score = 20 * (1 - energy_diff) # Higher if closer to target energy
-    score += energy_score
-    reasons.append(f"energy level {song['energy']:.1f}" + 
-                   (" matches" if energy_diff < 0.1 else " complements"))
+    # Energy scoring (only if target_energy is specified)
+    target_energy = user_prefs.get("target_energy")
+    if target_energy is not None:
+        energy_diff = abs(target_energy - song["energy"])
+        energy_score = 20 * (1 - energy_diff)
+        score += energy_score
+        reasons.append(f"energy level {song['energy']:.1f}" +
+                       (" matches" if energy_diff < 0.1 else " complements"))
 
-    if user_prefs["likes_acoustic"] and song["acousticness"] > 0.7:
+    # Acousticness scoring (only if likes_acoustic is specified)
+    likes_acoustic = user_prefs.get("likes_acoustic")
+    if likes_acoustic and song["acousticness"] > 0.7:
         score += 15
         reasons.append("has the acoustic sound you enjoy")
-    
-    valence_diff = abs(user_prefs["target_valence"] - song["valence"])
-    valence_score = 10 * (1 - valence_diff) # Higher if closer to target valence
-    score += valence_score
-    reasons.append(f"valence level {song['valence']:.1f}" + 
-                   (" matches" if valence_diff < 0.1 else " complements"))
 
-    # Expected return format: (score, reasons)
+    # Valence scoring (only if target_valence is specified)
+    target_valence = user_prefs.get("target_valence")
+    if target_valence is not None:
+        valence_diff = abs(target_valence - song["valence"])
+        valence_score = 10 * (1 - valence_diff)
+        score += valence_score
+        reasons.append(f"valence level {song['valence']:.1f}" +
+                       (" matches" if valence_diff < 0.1 else " complements"))
+
     return [score, reasons]
 
 def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tuple[Dict, float, str]]:
     """
     Functional implementation of the recommendation logic.
-    Required by src/main.py
+    Returns k recommendations: 80% from top-ranked + 20% from 40-60th percentile (discovery).
+    Expected return format: (song_dict, score, explanation_string)
     """
-    # TODO: Implement scoring and ranking logic
-    # Expected return format: (song_dict, score, explanation)
-    return []
+    import random
+
+    # Score all songs and create (song, score, reasons) tuples
+    scored_songs = [(song, *score_song(user_prefs, song)) for song in songs]
+
+    # Sort by score descending (best matches first)
+    scored_songs.sort(key=lambda x: x[1], reverse=True)
+
+    # Calculate split: 80% top-ranked, 20% from 40-60th percentile
+    top_count = max(1, int(k * 0.8))
+    discovery_count = k - top_count
+
+    # Select top 80% of recommendations
+    top_recommendations = scored_songs[:top_count]
+
+    # Calculate 40-60th percentile range for "decent but different" discovery songs
+    n = len(scored_songs)
+    p40_idx = int(0.4 * n)  # 40th percentile index
+    p60_idx = int(0.6 * n)  # 60th percentile index
+    middle_range = scored_songs[p40_idx:p60_idx]
+
+    # Randomly sample from middle range to add variety
+    discovery_recommendations = (random.sample(middle_range, min(discovery_count, len(middle_range))) if middle_range else [])
+
+    # Combine: top-ranked first, then discovery picks
+    results = top_recommendations + discovery_recommendations
+
+    # Format as (song_dict, score, explanation_string)
+    return [(song, score, ' | '.join(reasons)) for song, score, reasons in results[:k]]
