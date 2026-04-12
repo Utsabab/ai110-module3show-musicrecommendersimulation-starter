@@ -56,10 +56,12 @@ Some prompts to answer:
   In order to add diversity to the recommendation, we will approach the recommendation with 80% similarity and 20% discovery. Among top K, 80% will be highest ranked and the 20% will be the lowest ranked songs.
 
 Results for test example:
+
 user_prefs = {"favorite_genre": "pop", "favorite_mood": "happy", "target_energy": 0.8}
 ![](image/initialReco.png)
 
 Results for edge cases:
+
 user_prefs = {"favorite_genre": "electronic", "favorite_mood": "energetic", "target_energy": 0.85, "likes_acoustic": True, "target_valence": 0.80}
 ![](image/electronic.png)
 
