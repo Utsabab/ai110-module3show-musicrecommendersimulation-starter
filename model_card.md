@@ -63,12 +63,27 @@ Prompts:
 
 Where the system struggles or behaves unfairly. 
 
+- The dataset is 35% very high energy songs creating high-energy bias. 
+- There are unique genres. Among 20 songs there are 14 unique genres. Users whose genre doesn't match get permanent -55 pts penalty.
+- Users outside mainstream genres permanently capped at 45 pts creating genre + mpdd weights dominance.
+
 Prompts:  
 
 - Features it does not consider  
+
+tempo_bpm and danceability could help context-specific recommendations.
+
 - Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
+
+11/15 moods appear only once and 15/17 genres appeard only once.
+
+- Cases where the system overfits to one preference
+
+When genre and mood match, that will be enough to lock it in top song regardless of how much other features contribute.
+
 - Ways the scoring might unintentionally favor some users  
+
+Users with pop + happy preference have 2.8x advantage to blues user.
 
 ---
 
