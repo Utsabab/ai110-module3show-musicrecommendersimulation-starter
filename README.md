@@ -53,7 +53,7 @@ Some prompts to answer:
 
 - How do you choose which songs to recommend?
 
-  In order to add diversity to the recommendation, we will approach the recommendation with 80% similarity and 20% discovery. Among top K, 80% will be highest ranked and the 20% will be the lowest ranked songs.
+  In order to add diversity to the recommendation, we will approach the recommendation with 80% similarity and 20% discovery. Among top K, 80% will be highest ranked and the 20% will be the songs from 40th percentile to 60th percentile.
 
 Results for test example:
 
@@ -120,23 +120,25 @@ You can add more tests in `tests/test_recommender.py`.
 
 Use this section to document the experiments you ran. For example:
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+What happened when you changed the weight on genre from 2.0 to 0.5
+
+- The system became less opinionated about genre matching and songs that don't match user's pavoritegenre are less penalized. User who loves pop can get rock recommendation based on match with mood/energy/valence.
+
+What happened when you added tempo or valence to the score
+
+- More precision in matching was observed with addition of valence. Also, more features mean less explainability.
+
+How did your system behave for different types of users
+
+- Mainstream genre listeners are favored and niche users are penalized.
 
 ---
 
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
-
-Examples:
-
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
+- The dataset is 35% very high energy songs creating high-energy bias. 
+- There are unique genres. Among 20 songs there are 14 unique genres. Users whose genre doesn't match get permanent -55 pts penalty.
+- Users outside mainstream genres permanently capped at 45 pts creating genre + mpdd weights dominance.
 
 ---
 

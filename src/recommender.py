@@ -29,7 +29,7 @@ class UserProfile:
     favorite_mood: str
     target_energy: float
     likes_acoustic: bool
-    target_valence: float
+    target_valence: Optional[float] = None
 
 class Recommender:
     """
@@ -40,12 +40,45 @@ class Recommender:
         self.songs = songs
 
     def recommend(self, user: UserProfile, k: int = 5) -> List[Song]:
-        # TODO: Implement recommendation logic
-        return self.songs[:k]
+        user_prefs = {
+            'favorite_genre': user.favorite_genre,
+            'favorite_mood': user.favorite_mood,
+            'target_energy': user.target_energy,
+            'likes_acoustic': user.likes_acoustic,
+            'target_valence': user.target_valence,
+        }
+        scored = [(song, score_song(user_prefs, self._song_to_dict(song))[0]) for song in self.songs]
+        scored.sort(key=lambda x: x[1], reverse=True)
+        return [song for song, _ in scored[:k]]
 
     def explain_recommendation(self, user: UserProfile, song: Song) -> str:
-        # TODO: Implement explanation logic
-        return "Explanation placeholder"
+        user_prefs = {
+            'favorite_genre': user.favorite_genre,
+            'favorite_mood': user.favorite_mood,
+            'target_energy': user.target_energy,
+            'likes_acoustic': user.likes_acoustic,
+            'target_valence': user.target_valence,
+        }
+        _, reasons = score_song(user_prefs, self._song_to_dict(song))
+        if reasons:
+            return ' | '.join(reasons)
+        return f"'{song.title}' by {song.artist} may match your taste."
+
+    @staticmethod
+    def _song_to_dict(song: Song) -> Dict:
+        """Helper method to convert Song dataclass to dictionary."""
+        return {
+            'id': song.id,
+            'title': song.title,
+            'artist': song.artist,
+            'genre': song.genre,
+            'mood': song.mood,
+            'energy': song.energy,
+            'tempo_bpm': song.tempo_bpm,
+            'valence': song.valence,
+            'danceability': song.danceability,
+            'acousticness': song.acousticness
+        }
 
 def load_songs(csv_path: str) -> List[Dict]:
     """
